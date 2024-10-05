@@ -44,17 +44,18 @@ export default function CreatePost() {
     validationSchema,
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: async (values, { resetForm }) => {
-      const response = await axios.post(`post/create`, values, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+    onSubmit: async values => {
+      console.log(values)
+      // const response = await axios.post(`post/create`, values, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // })
     },
   })
 
   const generateSlug = () => {
-    let str = formik.values.title
+    const str = formik.values.title
       .toLowerCase()
       .trim()
       .replace(" - ", "-")
@@ -130,9 +131,8 @@ export default function CreatePost() {
                   },
                 })
 
-                console.log({ response })
-                if (response && response.status === 200 && response.data.status === "Successful") {
-                  let item: { filename: string; url: string } = {
+                if (response && response.status === 200) {
+                  const item: { filename: string; url: string } = {
                     filename: response.data.data.filename,
                     url: response.data.data.url,
                   }
