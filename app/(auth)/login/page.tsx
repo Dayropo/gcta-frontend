@@ -28,7 +28,7 @@ export default function Login() {
     validateOnChange: false,
     onSubmit: async (values, { resetForm }) => {
       await axios
-        .post(`user/login`, values, { withCredentials: true })
+        .post(`user/login`, values)
         .then(response => {
           toast.success(response.data.message)
           resetForm()
