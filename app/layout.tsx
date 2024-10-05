@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { geistMono, geistSans, poppins } from "./fonts"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import ToastifyProvider from "@/providers/ToastifyProvider"
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +19,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
       >
-        {children}
+        <TooltipProvider>
+          <ToastifyProvider>{children}</ToastifyProvider>
+        </TooltipProvider>
       </body>
     </html>
   )
