@@ -80,3 +80,15 @@ body {
 a.link {
   @apply text-blue-500 !important;
 }
+
+.body-content .text-node {
+  @apply mb-5;
+}
+
+.body-content a {
+  @apply text-blue-500 underline;
+}
+
+.body-content .heading-node {
+  @apply mb-1.5;
+}

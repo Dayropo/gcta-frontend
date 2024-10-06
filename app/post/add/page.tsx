@@ -11,10 +11,10 @@ import { useFormik } from "formik"
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import { ArrowUpToLine } from "lucide-react"
-import Header from "@/components/layout/header"
 import Swal from "sweetalert2"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import Header from "@/components/Header"
 
 const DateTimePicker = dynamic(() => import("@/components/time-picker/date-time-picker"), {
   ssr: false,
@@ -52,7 +52,7 @@ export default function CreatePost() {
     validateOnChange: false,
     onSubmit: async (values, { resetForm }) => {
       await axios
-        .post(`/post/create`, {
+        .post(`posts/create`, {
           title: values.title,
           slug: values.slug,
           mainImage: values.image.filename,

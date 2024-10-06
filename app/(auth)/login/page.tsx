@@ -10,6 +10,7 @@ import axios from "@/api/axios"
 import { useRouter } from "next/navigation"
 import Swal from "sweetalert2"
 import { toast } from "react-toastify"
+import { useAuthStore } from "@/store/authStore"
 
 const validationSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -20,6 +21,7 @@ type FormValues = yup.InferType<typeof validationSchema>
 
 export default function Login() {
   const router = useRouter()
+  const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn)
 
   const formik = useFormik<FormValues>({
     initialValues: { email: "", password: "" },
@@ -32,6 +34,7 @@ export default function Login() {
         .then(response => {
           toast.success(response.data.message)
           resetForm()
+          setIsLoggedIn(true)
           router.push("/")
         })
         .catch(error => {
