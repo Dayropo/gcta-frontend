@@ -1,21 +1,19 @@
-import axios from "@/api/axios"
+import { getAllPosts } from "@/api/queries"
 import HomePage from "@/components/HomePage"
+import { QueryClient } from "@tanstack/react-query"
 import { Suspense } from "react"
 
-export const revalidate = 0
-
-const getAllPosts = async () => {
-  const { data } = await axios.get(`posts`)
-
-  return data.data as TPost[]
-}
-
 export default async function Home() {
-  const posts = await getAllPosts()
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: ["posts"],
+    queryFn: getAllPosts,
+  })
 
   return (
     <Suspense>
-      <HomePage posts={posts} />
+      <HomePage />
     </Suspense>
   )
 }

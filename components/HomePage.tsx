@@ -3,13 +3,12 @@
 import React, { useState } from "react"
 import Header from "./Header"
 import Image from "next/image"
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { Card, CardHeader, CardTitle } from "./ui/card"
 import moment from "moment"
 import Post from "./Post"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
@@ -17,13 +16,26 @@ import {
 } from "./ui/dropdown-menu"
 import { Button } from "./ui/button"
 import { useQuery } from "@tanstack/react-query"
-import axios from "@/api/axios"
 import { CaretDownIcon } from "@radix-ui/react-icons"
 import { useRouter } from "next/navigation"
+import { getAllPosts, getFilteredPosts, getUsers } from "@/api/queries"
 
-const HomePage = ({ posts }: { posts: TPost[] }) => {
+const HomePage = () => {
   const router = useRouter()
   const [author, setAuthor] = useState<string>("all")
+
+  const {
+    data: posts,
+    status: postsStatus,
+    error: postsError,
+  } = useQuery({
+    queryKey: ["posts"],
+    queryFn: getAllPosts,
+  })
+
+  if (postsStatus === "error") {
+    console.error(postsError)
+  }
 
   const {
     data: authors,
@@ -31,11 +43,7 @@ const HomePage = ({ posts }: { posts: TPost[] }) => {
     error: authorsError,
   } = useQuery({
     queryKey: ["users"],
-    queryFn: async () => {
-      const { data } = await axios.get(`user/all`)
-
-      return data.data as TUser[]
-    },
+    queryFn: getUsers,
   })
 
   if (authorsStatus === "error") {
@@ -43,12 +51,8 @@ const HomePage = ({ posts }: { posts: TPost[] }) => {
   }
 
   const { data, status, error } = useQuery({
-    queryKey: ["posts", author],
-    queryFn: async () => {
-      const { data } = await axios.get(`posts?author=${author}`)
-
-      return data.data as TPost[]
-    },
+    queryKey: ["filtered-posts", author],
+    queryFn: () => getFilteredPosts(author),
   })
 
   if (status === "error") {
@@ -59,33 +63,37 @@ const HomePage = ({ posts }: { posts: TPost[] }) => {
     <div className="relative mx-auto min-h-screen w-full max-w-5xl font-poppins">
       <Header />
 
-      <main className="w-full p-12">
-        <section
-          className="relative h-96 w-full cursor-pointer"
-          onClick={() => router.push(`/${posts[0].slug}`)}
-        >
-          <Image
-            src={posts[0].imageUrl}
-            alt={posts[0].mainImage}
-            fill
-            className="rounded-xl object-cover hover:opacity-75"
-          />
+      <main className="w-full px-4 py-12 sm:px-8 lg:px-12">
+        {postsStatus === "success" && (
+          <section
+            className="relative h-96 w-full cursor-pointer"
+            onClick={() => router.push(`/${posts[0].slug}`)}
+          >
+            <Image
+              src={posts[0].imageUrl}
+              alt={posts[0].mainImage}
+              fill
+              className="rounded-xl object-cover hover:opacity-75"
+            />
 
-          <Card className="absolute -bottom-8 left-8 z-10 max-w-sm">
-            <CardHeader>
-              <CardTitle className="text-2xl hover:underline">{posts[0].title}</CardTitle>
-              <span className="flex items-center gap-1.5">
-                <p className="text-xs text-gray-400">{posts[0].author.name}</p>
-                <p className="text-xs text-gray-400">
-                  {moment(posts[0].publishedAt).format("MMMM DD, YYYY")}
-                </p>
-              </span>
-            </CardHeader>
-          </Card>
-        </section>
+            <Card className="absolute bottom-0 left-0 z-10 w-full sm:-bottom-10 sm:left-10 sm:max-w-sm">
+              <CardHeader>
+                <CardTitle className="text-lg hover:underline sm:text-2xl">
+                  {posts[0].title}
+                </CardTitle>
+                <span className="flex items-center gap-1.5">
+                  <p className="text-xs text-gray-400">{posts[0].author.name}</p>
+                  <p className="text-xs text-gray-400">
+                    {moment(posts[0].publishedAt).format("MMMM DD, YYYY")}
+                  </p>
+                </span>
+              </CardHeader>
+            </Card>
+          </section>
+        )}
 
-        <section className="mt-10 py-10">
-          <h4 className="mb-4 text-xl font-semibold">Latest Posts</h4>
+        <section className="py-8 sm:mt-10 sm:py-10">
+          <h4 className="mb-4 text-base font-semibold sm:text-xl">Latest Posts</h4>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -109,7 +117,7 @@ const HomePage = ({ posts }: { posts: TPost[] }) => {
           </DropdownMenu>
 
           {status === "success" && (
-            <div className="mt-4 grid auto-rows-min grid-cols-3 gap-4">
+            <div className="mt-4 grid auto-rows-min grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {data.map(post => (
                 <Post item={post} key={post._id} />
               ))}
