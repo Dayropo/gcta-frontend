@@ -104,7 +104,7 @@ export default function Header() {
                 >
                   Create new post
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer text-destructive">
+                <DropdownMenuItem className="cursor-pointer text-destructive" onClick={signout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>
                 </DropdownMenuItem>

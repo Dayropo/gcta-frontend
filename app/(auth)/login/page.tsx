@@ -50,8 +50,8 @@ export default function Login() {
 
   return (
     <main className="relative flex h-screen w-full font-poppins">
-      <div className="flex w-1/2 items-center justify-center">
-        <div className="grid w-full max-w-lg gap-8">
+      <div className="flex w-full items-center justify-center sm:w-1/2">
+        <div className="grid w-full px-4 gap-8 sm:max-w-lg">
           <h2 className="text-2xl font-semibold capitalize">Welcome back!</h2>
 
           <form className="grid gap-4" onSubmit={formik.handleSubmit}>
@@ -97,7 +97,7 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="flex w-1/2 items-center justify-center rounded-bl-[32px] rounded-tl-[32px] bg-nature bg-cover bg-center"></div>
+      <div className="hidden w-1/2 items-center justify-center rounded-bl-[32px] rounded-tl-[32px] bg-nature bg-cover bg-center sm:flex"></div>
     </main>
   )
 }
